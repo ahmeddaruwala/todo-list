@@ -1,52 +1,60 @@
-// function Addtodo() {
-//   const todoInp = document.getElementById("todo-input");
-//   const list = document.getElementById("todo-list");
+const todoInp = document.getElementById("todo-input");
+const addBtn = document.getElementById("add-todo");
+const list = document.getElementById("list");
+let todo;
 
-//   if (!todoInp.value) {
-//     alert("Please enter your todo");
-//     return;
-//   }
+const todos = JSON.parse(localStorage.getItem("todo")) || [];
+localStorage.setItem("todo", JSON.stringify(todos));
 
-//   const newTodo = document.createElement("div");
-//   const todoText = document.createElement("p");
-//   todoText.innerHTML = todoInp.value;
-//   newTodo.append(todoText);
+function addTodo() {
+  todo = todoInp.value.trim();
 
-//   newTodo.className = "todo-item";
+  if (todo) {
+    createTodo(todo);
 
-//   const editBtn = document.createElement("button");
-//   const deleteBtn = document.createElement("button");
+    todoInp.value = "";
 
-//   editBtn.innerHTML = "Edit";
-//   editBtn.setAttribute("onclick", "editTodo(this)");
-//   newTodo.append(editBtn);
+    saveTodo();
+  } else {
+    alert("Please enter a task!");
+  }
+}
 
-//   deleteBtn.innerHTML = "Delete";
-//   deleteBtn.setAttribute("onclick", "deleteTodo(this)");
-//   newTodo.append(deleteBtn);
+addBtn.addEventListener("click", addTodo);
 
-//   list.append(newTodo);
-//   todoInp.value = "";
-// }
+function createTodo() {
+  const listItem = document.createElement("li");
 
-// function deleteTodo(deleteBtn) {
-//   deleteBtn.parentElement.remove();
-// }
+  listItem.textContent = todo;
 
-// function editTodo(editBtn) {
-//   const textEle = editBtn.previousElementSibling;
+  const delBtn = document.createElement("button");
 
-//   const editInp = document.createElement("input");
-//   editInp.setAttribute("type", "text");
-//   editInp.value = textEle.innerText;
+  delBtn.textContent = "Delete";
 
-//   textEle.className += "hide";
+  delBtn.className = "del-todo";
 
-//   editBtn.parentElement.prepend(editInp);
+  listItem.appendChild(delBtn);
 
-//   editInp.addEventListener("blur", function () {
-//     textEle.innerText = editInp.value;
-//     textEle.className = textEle.className.replace("hide", "");
-//     editInp.remove("");
-//   });
+  list.appendChild(listItem);
+
+  delBtn.addEventListener("click", function () {
+    list.removeChild(listItem);
+    saveTodo();
+  });
+}
+
+function saveTodo() {
+  let todos = [];
+  list.querySelectorAll("li").forEach(function (item) {
+    todos.push(item.textContent.replace("Delete", "").trim());
+  });
+
+  localStorage.setItem("todo", JSON.stringify(todos));
+}
+
+// function loadTodo() {
+//   const todos = JSON.parse(localStorage.getItem("todo")) || [];
+
+//   // todos.forEach(createTodo);
+
 // }
